@@ -43,82 +43,83 @@
 export default {
   data() {
     return {
-      //数据绑定
+      // 数据绑定
       loginForm: {
-        username: "admin",
-        password: "123456",
+        username: 'admin',
+        password: '123456'
       },
-      //表单验证规则
+      // 表单验证规则
       loginFormRules: {
         username: [
-          { required: true, message: "请输入登录名", trigger: "blur" },
+          { required: true, message: '请输入登录名', trigger: 'blur' },
           {
             min: 3,
             max: 10,
-            message: "登录名长度在 3 到 10 个字符",
-            trigger: "blur",
-          },
+            message: '登录名长度在 3 到 10 个字符',
+            trigger: 'blur'
+          }
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
+          { required: true, message: '请输入密码', trigger: 'blur' },
           {
             min: 6,
             max: 15,
-            message: "密码长度在 6 到 15 个字符",
-            trigger: "blur",
-          },
-        ],
-      },
-    };
+            message: '密码长度在 6 到 15 个字符',
+            trigger: 'blur'
+          }
+        ]
+      }
+    }
   },
-  //添加行为，
+  // 添加行为，
   methods: {
-    //添加表单重置方法
+    // 添加表单重置方法
     resetLoginForm() {
-      //this=>当前组件对象，其中的属性$refs包含了设置的表单ref
+      // this=>当前组件对象，其中的属性$refs包含了设置的表单ref
       //   console.log(this)
-      this.$refs.LoginFormRef.resetFields();
+      this.$refs.LoginFormRef.resetFields()
     },
     login() {
-      //点击登录的时候先调用validate方法验证表单内容是否有误
+      // 点击登录的时候先调用validate方法验证表单内容是否有误
       this.$refs.LoginFormRef.validate(async (valid) => {
-        //如果valid参数为true则验证通过
-        if (!valid) {
-          return;
-        }
-        //发送请求进行登录
-        const { data: res } = await this.$http.post("login", this.loginForm);
-        console.log(res);
+        // 如果valid参数为true则验证通过
+        if (!valid) return
+        // 发送请求进行登录
+        const { data: res } = await this.$http.post('login', this.loginForm)
         if (res.meta.status !== 200) {
-          return this.$message.error("登录失败:" + res.meta.msg); //console.log("登录失败:"+res.meta.msg)
+          return this.$message.error('登录失败:' + res.meta.msg) // console.log("登录失败:"+res.meta.msg)
         }
 
-        this.$message.success("登录成功");
+        this.$message.success('登录成功')
         // console.log(res);
-        //保存token
-        window.sessionStorage.setItem("token", res.data.token);
+        // 保存token
+        window.sessionStorage.setItem('token', JSON.stringify(res.data))
         // 导航至/home
-        this.$router.push("/home");
-      });
-    },
-  },
-};
+        this.$router.push('/home')
+      })
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
 .login_container {
-  background-color: #2b5b6b;
+  background-color: #e2f4de;
+  background: url(../assets/images/design_nanoshield__car28k0dybbm_large.jpg)
+    no-repeat center 20%;
+  background-size: 60%;
+  background-color: #e2f4de;
   height: 100%;
 }
 .login_box {
   width: 450px;
   height: 300px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 3px;
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -30%);
   .avatar_box {
     height: 130px;
     width: 130px;

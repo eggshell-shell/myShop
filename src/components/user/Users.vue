@@ -26,7 +26,9 @@
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary" @click="addDialogVisible = true"
+          <el-button
+            type="primary"
+            @click="addDialogVisible = !addDialogVisible"
             >添加用户</el-button
           >
         </el-col>
@@ -224,7 +226,7 @@ export default {
         // 当前的页数
         pagenum: 1,
         // 当前每页显示多少条数据
-        pagesize: 4,
+        pagesize: 6
       },
       userlist: [],
       total: 0,
@@ -235,7 +237,7 @@ export default {
         username: '',
         password: '',
         email: '',
-        mobile: '',
+        mobile: ''
       },
       // 添加表单的验证规则对象
       addFormRules: {
@@ -245,8 +247,8 @@ export default {
             min: 3,
             max: 10,
             message: '用户名的长度在3~10个字符之间',
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -254,17 +256,17 @@ export default {
             min: 6,
             max: 15,
             message: '用户名的长度在6~15个字符之间',
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
-          { validator: checkEmail, trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
         ],
         mobile: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { validator: checkMobile, trigger: 'blur' },
-        ],
+          { validator: checkMobile, trigger: 'blur' }
+        ]
       },
       // 控制修改用户对话框的显示与隐藏
       editDialogVisible: false,
@@ -274,12 +276,12 @@ export default {
       editFormRules: {
         email: [
           { required: true, message: '请输入用户邮箱', trigger: 'blur' },
-          { validator: checkEmail, trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
         ],
         mobile: [
           { required: true, message: '请输入用户手机', trigger: 'blur' },
-          { validator: checkMobile, trigger: 'blur' },
-        ],
+          { validator: checkMobile, trigger: 'blur' }
+        ]
       },
       // 控制分配角色对话框的显示与隐藏
       setRoleDialogVisible: false,
@@ -288,7 +290,7 @@ export default {
       // 所有角色的数据列表
       rolesList: [],
       // 已选中的角色Id值
-      selectedRoleId: '',
+      selectedRoleId: ''
     }
   },
   created() {
@@ -297,7 +299,7 @@ export default {
   methods: {
     async getUserList() {
       const { data: res } = await this.$http.get('users', {
-        params: this.queryInfo,
+        params: this.queryInfo
       })
       if (res.meta.status !== 200) {
         return this.$message.error('获取用户列表失败！')
@@ -326,7 +328,7 @@ export default {
       )
       if (res.meta.status !== 200) {
         userinfo.mg_state = !userinfo.mg_state
-        return this.$message.error('更新用户状态失败！')
+        return this.$message.error('您无权更新用户状态！')
       }
       this.$message.success('更新用户状态成功！')
     },
@@ -342,7 +344,7 @@ export default {
         const { data: res } = await this.$http.post('users', this.addForm)
 
         if (res.meta.status !== 201) {
-          this.$message.error('添加用户失败！')
+          this.$message.error('您无权添加用户！')
         }
 
         this.$message.success('添加用户成功！')
@@ -377,12 +379,12 @@ export default {
           'users/' + this.editForm.id,
           {
             email: this.editForm.email,
-            mobile: this.editForm.mobile,
+            mobile: this.editForm.mobile
           }
         )
 
         if (res.meta.status !== 200) {
-          return this.$message.error('更新用户信息失败！')
+          return this.$message.error('您无权用户信息！')
         }
 
         // 关闭对话框
@@ -402,7 +404,7 @@ export default {
         {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
+          type: 'warning'
         }
       ).catch((err) => err)
 
@@ -416,7 +418,7 @@ export default {
       const { data: res } = await this.$http.delete('users/' + id)
 
       if (res.meta.status !== 200) {
-        return this.$message.error('删除用户失败！')
+        return this.$message.error('您无权删除！')
       }
 
       this.$message.success('删除用户成功！')
@@ -445,12 +447,12 @@ export default {
       const { data: res } = await this.$http.put(
         `users/${this.userInfo.id}/role`,
         {
-          rid: this.selectedRoleId,
+          rid: this.selectedRoleId
         }
       )
 
       if (res.meta.status !== 200) {
-        return this.$message.error('更新角色失败！')
+        return this.$message.error('您无权更新角色！')
       }
 
       this.$message.success('更新角色成功！')
@@ -461,8 +463,8 @@ export default {
     setRoleDialogClosed() {
       this.selectedRoleId = ''
       this.userInfo = {}
-    },
-  },
+    }
+  }
 }
 </script>
 

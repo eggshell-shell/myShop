@@ -5,7 +5,19 @@
       <div>
         <span>手机销售后台管理系统</span>
       </div>
-      <el-button type="info" @click="logout">退出</el-button>
+      <div>
+        <template>
+          <div class="demo-type">
+            <div>
+              <el-avatar icon="el-icon-user-solid"></el-avatar>
+            </div>
+          </div>
+        </template>
+        <el-tag type="success">
+          欢迎{{ username }} ! 当前角色为 : {{ this.roleName }}</el-tag
+        >
+        <el-button type="info" @click="logout">退出</el-button>
+      </div>
     </el-header>
     <!-- 页面主体区域 -->
     <el-container>
@@ -74,19 +86,57 @@ export default {
         103: 'iconfont icon-tijikongjian',
         101: 'iconfont icon-shangpin',
         102: 'iconfont icon-danju',
-        145: 'iconfont icon-baobiao',
+        145: 'iconfont icon-baobiao'
       },
       // 是否折叠
       isCollapse: false,
       // 被激活的链接地址
       activePath: '',
+      username: '',
+      rid: '',
+      roleName: '',
+      queryInfo: {
+        query: '',
+        // 当前的页数
+        pagenum: 1,
+        // 当前每页显示多少条数据
+        pagesize: 50
+      },
+      // 用户列表
+      userlist: [],
+      // 当前用户列表
+      new_user: []
     }
   },
   created() {
+    // this.judge()
     this.getMenuList()
+    this.getUserList()
     this.activePath = window.sessionStorage.getItem('activePath')
+    this.getUser()
   },
   methods: {
+    // 获取用户状态
+    async getUserList() {
+      const { data: res } = await this.$http.get('users', {
+        params: this.queryInfo
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('出现服务器错误，暂时无法验证身份')
+      }
+      this.userlist = res.data.users
+      const userId = JSON.parse(window.sessionStorage.getItem('token')).id
+      const user = this.userlist.find((item) => {
+        console.log(item.id + '-----' + userId)
+        if (item.id == userId) return item
+      })
+      if (!user.mg_state) {
+        window.sessionStorage.clear()
+        this.$message.error('用户已被禁止登录')
+        this.$router.push('/login')
+      }
+    },
+    // 退出
     logout() {
       window.sessionStorage.clear()
       this.$router.push('/login')
@@ -96,7 +146,6 @@ export default {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
-      console.log(res)
     },
     // 点击按钮，切换菜单的折叠与展开
     // toggleCollapse() {
@@ -107,7 +156,16 @@ export default {
       window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     },
-  },
+    async getUser() {
+      this.username = JSON.parse(
+        window.sessionStorage.getItem('token')
+      ).username
+      this.rid = JSON.parse(window.sessionStorage.getItem('token')).rid
+      const { data: res } = await this.$http.get(`roles/${this.rid}`)
+      if (res.meta.status != 200) { return this.$message.error('用户角色信息获取失败') }
+      this.roleName = res.data.roleName
+    }
+  }
 }
 </script>
 
@@ -155,5 +213,12 @@ export default {
   text-align: center;
   letter-spacing: 0.2em;
   cursor: pointer;
+}
+.el-tag {
+  margin-right: 10px;
+  font-size: 15px;
+}
+.el-avatar {
+  margin-top: 4px;
 }
 </style>
